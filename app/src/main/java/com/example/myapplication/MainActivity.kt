@@ -43,8 +43,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, WakeLockListener 
     var cnt: Int = 1
 
     // xyzの過去の値を保持する
-
-
     private var accelerationX = 0f
     private var accelerationY = 0f
     private var accelerationZ = 0f
@@ -209,8 +207,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener, WakeLockListener 
 
 
         // 過去10回の平均を求める
-        var thisX = 0f;
-        var thisY = 0f;
+        var thisX = 0f
+        var thisY = 0f
         var thisZ = 0f
         prevValues.slice(indices).forEach {
             thisX += it.acceleration[0] / indices.count()
