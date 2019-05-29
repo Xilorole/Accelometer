@@ -15,4 +15,6 @@
     <string name="start_recording">start</string>
     <string name="toggle_save">SAVE</string>
     <string name="empty_string">EMPTY_STRING</string>
+    <string name="nekoze_off">INUZE</string>
+    <string name="nekoze_on">NEKOZE</string>
 </resources>

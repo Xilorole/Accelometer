@@ -73,51 +73,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/text_meter_x" android:fontFamily="monospace"
                 android:text="@string/default_meter_test" android:textAlignment="center"/>
-        <ProgressBar
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/progress_bar_acc_x"/>
-        <SeekBar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/seekBarX" android:progressTint="#00FFFFFF"
-        />
         <TextView
                 android:text="@string/desc_acceleration_y"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/in_layer_desc_acc_y"/>
         <TextView
                 android:text="@string/default_meter_test"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/text_meter_y" android:textAlignment="center"
                 android:fontFamily="monospace"/>
-        <ProgressBar
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/progress_bar_acc_y"/>
-        <SeekBar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/seekBarY" android:progressTint="#00FFFFFF"
-        />
         <TextView
                 android:text="@string/desc_acceleration_z"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/in_layer_desc_acc_z"/>
         <TextView
                 android:text="@string/default_meter_test"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/text_meter_z" android:textAlignment="center"
                 android:fontFamily="monospace"/>
-        <ProgressBar
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/progress_bar_acc_z"/>
-        <SeekBar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/seekBarZ" android:progressTint="#00FFFFFF"
-        />
         <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" android:id="@+id/scrollView">
@@ -143,8 +116,8 @@
             android:layout_marginStart="8dp"
             android:textAlignment="viewEnd"
             app:layout_constraintStart_toEndOf="@+id/progressBar9"
-            app:layout_constraintEnd_toStartOf="@+id/toggleButton" android:layout_marginEnd="8dp"
-            app:layout_constraintBaseline_toBaselineOf="@+id/toggleButton"/>
+            app:layout_constraintEnd_toStartOf="@+id/NekozeCheckButton" android:layout_marginEnd="8dp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/toggleButton" app:layout_constraintHorizontal_bias="1.0"/>
     <ProgressBar
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
@@ -160,4 +133,11 @@
             app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="16dp"
             android:id="@+id/toggleButton" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="16dp"
             android:onClick="toggleRecordingStatus"/>
+    <ToggleButton
+            android:text="@string/nekoze_off"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/NekozeCheckButton" app:layout_constraintEnd_toStartOf="@+id/toggleButton"
+            android:layout_marginEnd="8dp" app:layout_constraintBaseline_toBaselineOf="@+id/toggleButton"
+            android:textOn="@string/nekoze_on" android:textOff="@string/nekoze_off" android:checked="false"/>
 </android.support.constraint.ConstraintLayout>

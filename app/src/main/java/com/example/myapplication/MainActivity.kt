@@ -6,8 +6,6 @@ import android.annotation.SuppressLint
 import android.app.KeyguardManager
 import android.content.ComponentCallbacks2
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -60,12 +58,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener, WakeLockListener 
 
     override fun onScreenOff() {
         val loggingTextView = findViewById<TextView>(R.id.loggingTextView)
+
         loggingTextView.text = (loggingTextView.text.toString() + "\n" + getToday() + " Screen Off.")
         screenOnFlag = false
     }
 
     override fun onScreenOn() {
         val loggingTextView = findViewById<TextView>(R.id.loggingTextView)
+
         loggingTextView.text = (loggingTextView.text.toString() + "\n" + getToday() + " Screen On.")
         screenOnFlag = true
     }
@@ -83,9 +83,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, WakeLockListener 
         mSensor = mManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
         findViewById<TextView>(R.id.loggingTextView).text = ""
-        val wakeLockBroadcastReceiver = WakeLockBroadcastReceiver(this)
-        registerReceiver(wakeLockBroadcastReceiver, IntentFilter(Intent.ACTION_SCREEN_ON))
-        registerReceiver(wakeLockBroadcastReceiver, IntentFilter(Intent.ACTION_SCREEN_OFF))
+        // val wakeLockBroadcastReceiver = WakeLockBroadcastReceiver(this)
+        // registerReceiver(wakeLockBroadcastReceiver, IntentFilter(Intent.ACTION_SCREEN_ON))
+        // registerReceiver(wakeLockBroadcastReceiver, IntentFilter(Intent.ACTION_SCREEN_OFF))
 
     }
 
@@ -103,6 +103,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, WakeLockListener 
             )
         }
         fileSave(string)
+        val loggingTextView = findViewById<TextView>(R.id.loggingTextView)
+
+        loggingTextView.text = (loggingTextView.text.toString() + "\n" + getToday() + "file Saved")
     }
 
     /* Checks if external storage is available for read and write */
@@ -110,11 +113,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, WakeLockListener 
         return Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
     }
 
-    /* Checks if external storage is available to at least read */
-    fun isExternalStorageReadable(): Boolean {
-        return Environment.getExternalStorageState() in
-                setOf(Environment.MEDIA_MOUNTED, Environment.MEDIA_MOUNTED_READ_ONLY)
-    }
 
     private fun getPublicDocumentStorageDir(dirName: String): File? {
         // Get the directory for the user's public pictures directory.
@@ -146,7 +144,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, WakeLockListener 
                 file.writeBytes(content.toByteArray())
                 Log.d("Write", context.filesDir.toString())
             }
-
         } else {
             Log.d("Write", "Failed")
         }
@@ -188,9 +185,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, WakeLockListener 
         nowMeasurement = Measurement(
             getToday(),
             listOf(accelerationX, accelerationY, accelerationZ),
-            !isDeviceLocked() && screenOnFlag
+            findViewById<ToggleButton>(R.id.NekozeCheckButton).isChecked
         )
-        prevValues.add(nowMeasurement)
+
 
         if (findViewById<ToggleButton>(R.id.toggleButton).isChecked) {
             cnt++
@@ -198,24 +195,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener, WakeLockListener 
             findViewById<TextView>(R.id.elapsed_time).apply {
                 text = ((System.currentTimeMillis() - start) / 1000).toInt().toString() + " sec"
             }
+            prevValues.add(nowMeasurement)
         }
 
 
         //今回のプロレスバーで使用されるxyz
         val valSize = prevValues.size
         val indices = max(0, valSize - 10) until prevValues.size
-
-
-        // 過去10回の平均を求める
-        var thisX = 0f
-        var thisY = 0f
-        var thisZ = 0f
-        prevValues.slice(indices).forEach {
-            thisX += it.acceleration[0] / indices.count()
-            thisY += it.acceleration[1] / indices.count()
-            thisZ += it.acceleration[2] / indices.count()
-        }
-
 
         // 加速度の表示の更新
         run {
@@ -230,36 +216,15 @@ class MainActivity : AppCompatActivity(), SensorEventListener, WakeLockListener 
             findViewById<TextView>(R.id.text_meter_z).text = generateAccelerationString(accelerationZ)
         }
 
-        // シークバーの更新
-        run {
-            //ゲージの最大値の確定．グラフ描画ができないので，やむなく．
-            maximumValueInPast = arrayOf(
-                abs(thisX), abs(thisY), abs(thisZ)
-            ).max()!!
-
-            val barMax = (maximumValueInPast * 200).toInt()
-            findViewById<ProgressBar>(R.id.seekBarX).apply {
-                max = barMax
-                progress = (((thisX) + maximumValueInPast) * 100).toInt()
-            }
-
-            findViewById<ProgressBar>(R.id.seekBarY).apply {
-                max = barMax
-                progress = (((thisY) + maximumValueInPast) * 100).toInt()
-            }
-
-            findViewById<ProgressBar>(R.id.seekBarZ).apply {
-                max = barMax
-                progress = (((thisZ) + maximumValueInPast) * 100).toInt()
-            }
-        }
 
         if (prevValues.size % 20 == 0) {
-            Log.d("noe Measurement", nowMeasurement.toString())
+            Log.d("now Measurement", "$cnt $nowMeasurement")
         }
 
         if (prevValues.size > 1010) {
             dumpToFile()
+
+            // 最後の10個だけ残す
             prevValues = ArrayList(prevValues.slice(indices))
         }
 
@@ -306,7 +271,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, WakeLockListener 
         //第三引数は更新頻度 UIはUI表示向き、FASTはできるだけ早く、GAMEはゲーム向き
         val status = findViewById<ToggleButton>(R.id.toggleButton).isChecked
         if (!status) {
-            mManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI)
+            mManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME)
         }
     }
 }
